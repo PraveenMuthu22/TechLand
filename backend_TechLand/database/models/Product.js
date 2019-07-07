@@ -1,16 +1,16 @@
 const mongoose = require('mongoose');
 
-export default mongoose.model('Product', new mongoose.Schema({
-    name: { String, required: true },
+const Product = mongoose.model('Product', new mongoose.Schema({
+    name: { type: String, required: true },
     description: String,
-    brand: { String, required: true },
-    specs: String,
+    brand: { type: String, required: true },
+    specs: Array,
     unitsInStock: Number,
     unitPrice: Number,
     manualDocument: String,
     catagory: String,
     supplier: { type: mongoose.Schema.Types.ObjectId, ref: 'Supplier' },
-    MSRP: String,
+    code: String,
     discount: Number,
     profilePic: String,
     otherPictures: Array,
@@ -19,3 +19,5 @@ export default mongoose.model('Product', new mongoose.Schema({
     colors: Array,
     warrantyPeriod: Date,
 }));
+
+module.exports = Product;

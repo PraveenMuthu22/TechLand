@@ -8,7 +8,7 @@ const dotenv = require('dotenv');
 const connectDatabase = require('./database/index');
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const productsRoute = require('./routes/ProductRoutes');
 
 const app = express();
 dotenv.config();
@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/products', productsRoute);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -43,5 +43,12 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-app.listen(process.env.PORT);
+//testing
+const productRepository = require('./database/repositories/ProductRepository');
+
+const products = productRepository.getAllProducts();
+
+const productsbyCat = productRepository.getProductsByCatagory();
+console.log('hello');
+// app.listen(process.env.PORT);
 module.exports = app;
