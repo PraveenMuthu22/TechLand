@@ -1,20 +1,39 @@
-const httpCodes = require('http-status-codes');
-const productRepository = require('../database/repositories/ProductRepository');
+import { INTERNAL_SERVER_ERROR, BAD_REQUEST } from 'http-status-codes';
+import * as productService from '../services/ProductService';
+import { errorResponse } from '../models/ResponseModels';
+import { Catagory } from '../Constants/Constants';
+import * as responseMessages from '../Constants/ResponseMessages';
 
-exports.get_product_by_id = (req, res) => {
-    res.send('NOT IMPLEMENTED:  GET');
-};
 
-exports.get_all_products = async (req, res) => {
-    const products = await productRepository.getAllProducts();
-    if (products === null) {
-        res.status(httpCodes.INTERNAL_SERVER_ERROR);
-        res.send('Error occured while retrieving products');
-    }
-    // res.status(200);
-    res.send(products);
-};
+export async function getProductById(req, res) {
+	const product = await productService.getProductById(req.params.id);
+	if (product === null || product === undefined) {
+		res.status(INTERNAL_SERVER_ERROR);
+		res.send(errorResponse(responseMessages.INTERNAL_SERVER_ERROR));
+	}
+	res.send(product);
+}
 
-exports.get_products_by_catagory = (req, res) => {
-    res.send('NOT IMPLEMENTED: GET');
-};
+export async function getAllProducts(req, res) {
+	const products = await productService.getAllProducts();
+	if (products === null || products === undefined) {
+		res.status(INTERNAL_SERVER_ERROR);
+		res.send(errorResponse(responseMessages.INTERNAL_SERVER_ERROR));
+	}
+	res.send(products);
+}
+
+export async function getProductsByCatagory(req, res) {
+	// validate catagory
+	if (!Catagory[req.params.catagory]) {
+		res.status(BAD_REQUEST);
+		res.send(errorResponse(responseMessages.INVALID_CATAGORY));
+	}
+
+	const products = await productService.getProductsByCatagory();
+	if (products === null) {
+		res.status(INTERNAL_SERVER_ERROR);
+		res.send(errorResponse(responseMessages.INTERNAL_SERVER_ERROR));
+	}
+	res.send(products);
+}
