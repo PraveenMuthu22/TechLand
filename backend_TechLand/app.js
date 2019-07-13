@@ -1,28 +1,32 @@
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const dotenv = require('dotenv');
+import createError from 'http-errors';
+import express, { json, urlencoded, static } from 'express';
+import { join } from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import { config } from 'dotenv';
 
-const connectDatabase = require('./database/index');
+import connectDatabase from './database/index';
 
-const indexRouter = require('./routes/index');
-const productsRoute = require('./routes/ProductRoutes');
+import indexRouter from './routes/index';
+import productsRoute from './routes/ProductRoutes';
+import { checkDatabaseConnection } from './utils/Middleware';
 
 const app = express();
-dotenv.config();
+config();
 connectDatabase();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(json());
+app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(static(join(__dirname, 'public')));
+
+
+app.use(checkDatabaseConnection);
 
 app.use('/', indexRouter);
 app.use('/products', productsRoute);
@@ -43,12 +47,6 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-//testing
-const productRepository = require('./database/repositories/ProductRepository');
 
-const products = productRepository.getAllProducts();
-
-const productsbyCat = productRepository.getProductsByCatagory();
-console.log('hello');
-// app.listen(process.env.PORT);
-module.exports = app;
+app.listen(process.env.PORT);
+export default app;

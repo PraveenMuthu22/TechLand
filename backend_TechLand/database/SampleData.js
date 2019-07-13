@@ -1,4 +1,4 @@
-const Product = require('./models/Product');
+import Product from './models/Product';
 
 function populate() {
 	addProducts();
@@ -88,7 +88,7 @@ function addProducts() {
 	);
 }
 
-module.exports = populate;
+export default populate;
 
 /*
 {

@@ -1,19 +1,37 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+import { connect as _connect, connection } from 'mongoose';
+import { config } from 'dotenv';
 
-// const sampleData = require('./SampleData');
+import sampleData from './SampleData';
 
-dotenv.config();
+config();
 
 
 function connect() {
-    mongoose.connect(process.env.CONNECTION_STRING, { useNewUrlParser: true })
-    .then(
-        () => console.log('connected to database'),
-        err => console.log('Error connecting to database', err),
-    );
+    _connect(process.env.CONNECTION_STRING, { useNewUrlParser: true })
+        .then(
+            () => console.log('connected to database'),
+            err => console.log('Error connecting to database', err),
+        );
 
+        connection.on('connected', () => {
+            console.log('Mongoose default connection open to ');
+        });
+
+        // If the connection throws an error
+        connection.on('error', (err) => {
+            console.log(`Mongoose default connection error: ${err}`);
+        });
+
+        // When the connection is disconnected
+        connection.on('disconnected', () => {
+            console.log('Mongoose default connection disconnected');
+        });
+
+        connection.on('reconnected', () => {
+            console.log('Mongoose default connection reconnected');
+        });
+        
     // sampleData();
 }
 
-module.exports = connect;
+export default connect;

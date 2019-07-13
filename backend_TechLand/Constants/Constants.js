@@ -1,6 +1,4 @@
-module.exports = {
-    Catagory: {
-        speaker: 'speaker',
-        headphone: 'headphone',
-    },
+export const Catagory = {
+    speaker: 'speaker',
+    headphone: 'headphone',
 };

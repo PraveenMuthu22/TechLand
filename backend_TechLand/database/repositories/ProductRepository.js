@@ -1,29 +1,45 @@
-const Product = require('../models/Product');
-const { Catagory } = require('../../Constants/Constants');
+import Product from '../models/Product';
 
-module.exports = {
-	getAllProducts: () => {
-		let products;
-		Product.find({})
-			.exec()
-			.then((p) => { products = p; })
+export function getAllProducts() {
+	return new Promise((resolve, reject) => {
+		Product.find({}, '-__v')
+			.then((p) => {
+				console.log(p);
+				resolve(p);
+			})
 			.catch((err) => {
-				console.log('Error occured retrieving all products', err);
+				console.log(ERROR_CANNOT_RETRIEVE_PRODUCTS, err);
+				reject(new Error(ERROR_CANNOT_RETRIEVE_PRODUCTS));
 			});
-			return products;
-	},
-
-	getProductsByCatagory: (catagory) => {
-		Product.find({ catagory: catagory }, (err, products) => {
-			if (err) {
-				console.log(err);
-				return null;
-			}
-			return products;
-		});
-	},
-
-	addProducts: (product) => {
-		console.log('Not implemented');
-	}
+	});
 }
+
+export function getProductsByCatagory(catagory) {
+	return new Promise((resolve, reject) => {
+		Product.find({ catagory },  '-__v')
+			.catch((err) => {
+				console.log(ERROR_CANNOT_RETRIEVE_PRODUCTS, err);
+				reject(new Error(ERROR_CANNOT_RETRIEVE_PRODUCTS));
+			})
+			.then((p) => {
+				console.log(p);
+				resolve(p);
+			});
+	});
+}
+
+export function getProductById(_id) {
+	console.log('id', _id);
+	return new Promise((resolve, reject) => {
+		Product.findById({ _id },  '-__v')
+			.catch((err) => {
+				console.log(ERROR_CANNOT_RETRIEVE_PRODUCTS, err);
+				reject(new Error(ERROR_CANNOT_RETRIEVE_PRODUCTS));
+			})
+			.then((p) => {
+				console.log(p);
+				resolve(p);
+			});
+	});
+}
+const ERROR_CANNOT_RETRIEVE_PRODUCTS = 'Error occured while retrieving products';
